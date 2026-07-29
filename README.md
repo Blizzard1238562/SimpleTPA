@@ -1,4 +1,4 @@
-# SimpleTPA
+# [SimpleTPA](https://modrinth.com/plugin/simpletpaplugin)
 
 A lightweight Paper plugin for `/tpa`-style teleport requests, with cooldowns, an opt-out toggle, and clickable accept/deny chat buttons.
 
