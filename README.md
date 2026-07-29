@@ -1,4 +1,4 @@
-# SimpleTPA
+# [SimpleTPA](https://modrinth.com/plugin/simpletpaplugin)
 
 A Paper/Folia and Bukkit/Spigot plugin for `/tpa`-style teleport requests, with cooldowns, an opt-out toggle, clickable accept/deny chat buttons, and optional teleport warmups.
 
