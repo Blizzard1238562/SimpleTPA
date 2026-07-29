@@ -1,0 +1,83 @@
+package Blizzard1238562.simpleTPA;
+
+import Blizzard1238562.simpleTPA.command.TpaAcceptCommand;
+import Blizzard1238562.simpleTPA.command.TpaCancelCommand;
+import Blizzard1238562.simpleTPA.command.TpaCommand;
+import Blizzard1238562.simpleTPA.command.TpaDenyCommand;
+import Blizzard1238562.simpleTPA.command.TpaReloadCommand;
+import Blizzard1238562.simpleTPA.command.TpaToggleCommand;
+import Blizzard1238562.simpleTPA.config.ConfigManager;
+import Blizzard1238562.simpleTPA.listener.UpdateNotificationListener;
+import Blizzard1238562.simpleTPA.manager.TpaRequestManager;
+import Blizzard1238562.simpleTPA.platform.DelayedTaskScheduler;
+import Blizzard1238562.simpleTPA.platform.Messenger;
+import Blizzard1238562.simpleTPA.platform.SoundPlayer;
+import Blizzard1238562.simpleTPA.platform.TeleportService;
+import Blizzard1238562.simpleTPA.platform.bukkit.BukkitAsyncTaskScheduler;
+import Blizzard1238562.simpleTPA.platform.bukkit.BukkitDelayedTaskScheduler;
+import Blizzard1238562.simpleTPA.platform.bukkit.BukkitMessenger;
+import Blizzard1238562.simpleTPA.platform.bukkit.BukkitSoundPlayer;
+import Blizzard1238562.simpleTPA.platform.bukkit.BukkitTeleportServiceImpl;
+import Blizzard1238562.simpleTPA.update.ModrinthUpdateChecker;
+import Blizzard1238562.simpleTPA.util.MessageComponentFactory;
+import Blizzard1238562.simpleTPA.util.PlayerDisplayFormatter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public final class SimpleTPA extends JavaPlugin {
+
+    private ConfigManager configManager;
+    private ModrinthUpdateChecker updateChecker;
+    private BukkitAudiences audiences;
+
+    @Override
+    public void onEnable() {
+        audiences = BukkitAudiences.create(this);
+        configManager = new ConfigManager(this);
+        configManager.load();
+
+        TpaRequestManager requestManager = new TpaRequestManager();
+        Messenger messenger = new BukkitMessenger(audiences);
+        SoundPlayer soundPlayer = new BukkitSoundPlayer(configManager, audiences);
+        MessageComponentFactory messageComponentFactory = new MessageComponentFactory(configManager);
+        PlayerDisplayFormatter playerDisplayFormatter = new PlayerDisplayFormatter(configManager);
+        DelayedTaskScheduler delayedTaskScheduler = new BukkitDelayedTaskScheduler(this);
+        TeleportService teleportService = new BukkitTeleportServiceImpl(this);
+        updateChecker = new ModrinthUpdateChecker(this, configManager, new BukkitAsyncTaskScheduler(this));
+
+        registerCommands(requestManager, soundPlayer, messageComponentFactory, playerDisplayFormatter, messenger,
+                delayedTaskScheduler, teleportService);
+        getServer().getPluginManager().registerEvents(
+                new UpdateNotificationListener(configManager, updateChecker, messenger), this);
+
+        updateChecker.start();
+        getLogger().info("SimpleTPA Activated!");
+    }
+
+    @Override
+    public void onDisable() {
+        if (updateChecker != null) {
+            updateChecker.stop();
+        }
+        if (audiences != null) {
+            audiences.close();
+        }
+    }
+
+    private void registerCommands(TpaRequestManager requestManager, SoundPlayer soundPlayer,
+                                   MessageComponentFactory messageComponentFactory,
+                                   PlayerDisplayFormatter playerDisplayFormatter, Messenger messenger,
+                                   DelayedTaskScheduler delayedTaskScheduler, TeleportService teleportService) {
+        getCommand("tpa").setExecutor(new TpaCommand(
+                configManager, requestManager, soundPlayer, messageComponentFactory, updateChecker,
+                playerDisplayFormatter, messenger, delayedTaskScheduler));
+        getCommand("tpaccept").setExecutor(new TpaAcceptCommand(configManager, requestManager, soundPlayer,
+                playerDisplayFormatter, messenger, teleportService));
+        getCommand("tpdeny").setExecutor(new TpaDenyCommand(configManager, requestManager, soundPlayer,
+                playerDisplayFormatter, messenger));
+        getCommand("tpacancel").setExecutor(new TpaCancelCommand(configManager, requestManager, soundPlayer,
+                playerDisplayFormatter, messenger));
+        getCommand("tpatoggle").setExecutor(new TpaToggleCommand(configManager, requestManager, soundPlayer, messenger));
+        getCommand("tpreload").setExecutor(new TpaReloadCommand(configManager, updateChecker, messenger));
+    }
+}

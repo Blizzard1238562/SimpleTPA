@@ -1,0 +1,50 @@
+name: SimpleTPA
+version: '${project.version}'
+main: Blizzard1238562.simpleTPA.SimpleTPA
+api-version: '1.21'
+softdepend: [PlaceholderAPI]
+commands:
+  tpa:
+    description: Sends a TPA-Request to a Player.
+    usage: /tpa <player|version|help>
+  tpaccept:
+    description: Accepts a TPA-Request by a Player.
+    usage: /tpaccept [player]
+  tpdeny:
+    description: Denies a TPA-Request by a Player.
+    usage: /tpdeny [player]
+  tpreload:
+    description: Reloads  config.yml
+    usage: /tpreload
+  tpacancel:
+    description: Cancels your pending TPA-Request.
+    usage: /tpacancel [player]
+  tpatoggle:
+    description: Toggles whether you accept incoming TPA-Requests.
+    usage: /tpatoggle
+
+permissions:
+  tpa.command.tpa:
+    description: Allows sending TPA requests.
+    default: true
+  tpa.command.tpaccept:
+    description: Allows accepting incoming TPA requests.
+    default: true
+  tpa.command.tpdeny:
+    description: Allows denying incoming TPA requests.
+    default: true
+  tpa.command.tpacancel:
+    description: Allows canceling your pending TPA request.
+    default: true
+  tpa.command.tpatoggle:
+    description: Allows toggling whether you can receive TPA requests.
+    default: true
+  tpa.command.version:
+    description: Allows viewing plugin version info via /tpa version.
+    default: true
+  tpa.command.help:
+    description: Allows viewing the command list via /tpa help.
+    default: true
+  tpa.reload:
+    description: Allows reloading the SimpleTPA configuration.
+    default: op

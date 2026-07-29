@@ -1,0 +1,10 @@
+target/
+*.class
+dependency-reduced-pom.xml
+.idea/
+*.iml
+*.iws
+*.ipr
+*.log
+.DS_Store
+Thumbs.db
