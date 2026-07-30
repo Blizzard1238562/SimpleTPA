@@ -1,6 +1,8 @@
 package Blizzard1238562.simpleTPA.command;
 
 import Blizzard1238562.simpleTPA.config.ConfigManager;
+import Blizzard1238562.simpleTPA.manager.PendingRequest;
+import Blizzard1238562.simpleTPA.manager.RequestType;
 import Blizzard1238562.simpleTPA.manager.TpaRequestManager;
 import Blizzard1238562.simpleTPA.platform.Messenger;
 import Blizzard1238562.simpleTPA.platform.SoundPlayer;
@@ -50,27 +52,29 @@ public final class TpaAcceptCommand implements CommandExecutor {
             return true;
         }
 
-        Set<UUID> requesterIds = requestManager.findRequestersForTarget(player.getUniqueId());
-        if (requesterIds.isEmpty()) {
+        Set<PendingRequest> incomingRequests = requestManager.findRequestersForTarget(player.getUniqueId());
+        if (incomingRequests.isEmpty()) {
             messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_no_request")));
             return configManager.isUsageHintSuppressed();
         }
 
-        UUID requesterId;
+        PendingRequest chosen;
         if (args.length >= 1) {
             Player namedRequester = Bukkit.getPlayer(args[0]);
-            if (namedRequester == null || !requesterIds.contains(namedRequester.getUniqueId())) {
+            chosen = namedRequester == null ? null : findByOtherPlayer(incomingRequests, namedRequester.getUniqueId());
+            if (chosen == null) {
                 messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_no_request_from").replace("%player%", args[0])));
                 return configManager.isUsageHintSuppressed();
             }
-            requesterId = namedRequester.getUniqueId();
-        } else if (requesterIds.size() == 1) {
-            requesterId = requesterIds.iterator().next();
+        } else if (incomingRequests.size() == 1) {
+            chosen = incomingRequests.iterator().next();
         } else {
-            messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_multiple_requests").replace("%players%", formatRequesterNames(requesterIds))));
+            messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_multiple_requests").replace("%players%", formatNames(incomingRequests))));
             return configManager.isUsageHintSuppressed();
         }
 
+        UUID requesterId = chosen.otherPlayerId();
+        RequestType type = chosen.type();
         Player requester = Bukkit.getPlayer(requesterId);
         requestManager.removeRequest(requesterId, player.getUniqueId());
 
@@ -82,24 +86,37 @@ public final class TpaAcceptCommand implements CommandExecutor {
         messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_accept_success").replace("%player%", playerDisplayFormatter.format(requester))));
         soundPlayer.play(player, "tpa_accept");
 
+        Player mover = type == RequestType.TPA_HERE ? player : requester;
+        Player destination = type == RequestType.TPA_HERE ? requester : player;
+
         if (configManager.isTeleportWarmupEnabled()) {
             int warmupSeconds = configManager.getTeleportWarmupSeconds();
-            messenger.send(requester, MessageFormatter.parse(configManager.getMessage("tpa_teleport_warmup_started")
-                    .replace("%player%", playerDisplayFormatter.format(player))
+            messenger.send(mover, MessageFormatter.parse(configManager.getMessage("tpa_teleport_warmup_started")
+                    .replace("%player%", playerDisplayFormatter.format(destination))
                     .replace("%seconds%", String.valueOf(warmupSeconds))));
-            TeleportWarmupState warmupState = new TeleportWarmupState(requester, player, configManager, messenger, soundPlayer, playerDisplayFormatter);
+            TeleportWarmupState warmupState = new TeleportWarmupState(mover, destination, configManager, messenger, soundPlayer, playerDisplayFormatter);
             teleportService.startWarmup(warmupState);
         } else {
-            teleportService.teleport(requester, player);
-            messenger.send(requester, MessageFormatter.parse(configManager.getMessage("tpa_accept_teleport").replace("%player%", playerDisplayFormatter.format(player))));
-            soundPlayer.play(requester, "tpa_accept");
+            teleportService.teleport(mover, destination);
+            messenger.send(mover, MessageFormatter.parse(configManager.getMessage("tpa_accept_teleport").replace("%player%", playerDisplayFormatter.format(destination))));
+            soundPlayer.play(mover, "tpa_accept");
         }
 
         return true;
     }
 
-    private String formatRequesterNames(Set<UUID> requesterIds) {
-        return requesterIds.stream()
+    private PendingRequest findByOtherPlayer(Set<PendingRequest> requests, UUID otherPlayerId) {
+        for (PendingRequest request : requests) {
+            if (request.otherPlayerId().equals(otherPlayerId)) {
+                return request;
+            }
+        }
+        return null;
+    }
+
+    private String formatNames(Set<PendingRequest> requests) {
+        return requests.stream()
+                .map(PendingRequest::otherPlayerId)
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .map(playerDisplayFormatter::format)

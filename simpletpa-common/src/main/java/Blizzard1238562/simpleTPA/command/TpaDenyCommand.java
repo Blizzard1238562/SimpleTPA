@@ -1,6 +1,7 @@
 package Blizzard1238562.simpleTPA.command;
 
 import Blizzard1238562.simpleTPA.config.ConfigManager;
+import Blizzard1238562.simpleTPA.manager.PendingRequest;
 import Blizzard1238562.simpleTPA.manager.TpaRequestManager;
 import Blizzard1238562.simpleTPA.platform.Messenger;
 import Blizzard1238562.simpleTPA.platform.SoundPlayer;
@@ -45,8 +46,8 @@ public final class TpaDenyCommand implements CommandExecutor {
             return true;
         }
 
-        Set<UUID> requesterIds = requestManager.findRequestersForTarget(player.getUniqueId());
-        if (requesterIds.isEmpty()) {
+        Set<PendingRequest> incomingRequests = requestManager.findRequestersForTarget(player.getUniqueId());
+        if (incomingRequests.isEmpty()) {
             messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_no_request")));
             return configManager.isUsageHintSuppressed();
         }
@@ -54,15 +55,16 @@ public final class TpaDenyCommand implements CommandExecutor {
         UUID requesterId;
         if (args.length >= 1) {
             Player namedRequester = Bukkit.getPlayer(args[0]);
-            if (namedRequester == null || !requesterIds.contains(namedRequester.getUniqueId())) {
+            PendingRequest chosen = namedRequester == null ? null : findByOtherPlayer(incomingRequests, namedRequester.getUniqueId());
+            if (chosen == null) {
                 messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_no_request_from").replace("%player%", args[0])));
                 return configManager.isUsageHintSuppressed();
             }
-            requesterId = namedRequester.getUniqueId();
-        } else if (requesterIds.size() == 1) {
-            requesterId = requesterIds.iterator().next();
+            requesterId = chosen.otherPlayerId();
+        } else if (incomingRequests.size() == 1) {
+            requesterId = incomingRequests.iterator().next().otherPlayerId();
         } else {
-            messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_multiple_requests").replace("%players%", formatRequesterNames(requesterIds))));
+            messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_multiple_requests").replace("%players%", formatNames(incomingRequests))));
             return configManager.isUsageHintSuppressed();
         }
 
@@ -80,8 +82,18 @@ public final class TpaDenyCommand implements CommandExecutor {
         return true;
     }
 
-    private String formatRequesterNames(Set<UUID> requesterIds) {
-        return requesterIds.stream()
+    private PendingRequest findByOtherPlayer(Set<PendingRequest> requests, UUID otherPlayerId) {
+        for (PendingRequest request : requests) {
+            if (request.otherPlayerId().equals(otherPlayerId)) {
+                return request;
+            }
+        }
+        return null;
+    }
+
+    private String formatNames(Set<PendingRequest> requests) {
+        return requests.stream()
+                .map(PendingRequest::otherPlayerId)
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .map(playerDisplayFormatter::format)

@@ -9,6 +9,9 @@ settings:
   teleport_warmup_seconds: 5 # Time in Seconds the requester has to stand still before being teleported. Only used if teleport_warmup_enabled is true.
   allow_multiple_requests: true # If enabled, Players can send TPA-Requests to multiple different Players at the same time, and receive multiple incoming Requests at once.
   suppress_usage_hint: true # If enabled, suppresses the server's built-in "/tpa <player|version|help>" usage hint that would otherwise appear below SimpleTPA's own error messages.
+  tpahere_enabled: true # If enabled, allows Players to use /tpahere to ask another Player to teleport to them.
+  tpahere_cooldown: 30 # Cooldown in Seconds, before a Player can send another TPA-Here-Request. Shares the same default as tpa_cooldown but can be changed independently.
+  tpahere_request_timeout: 60 # Time in Seconds, until a TPA-Here-Request runs out. Shares the same default as tpa_request_timeout but can be changed independently.
 sounds:
   tpa_request_sent: "entity.experience_orb.pickup"
   tpa_request_received: "entity.player.levelup"
@@ -18,9 +21,14 @@ sounds:
   tpa_toggle_enabled: "block.note_block.bass"
   tpa_toggle_disabled: "block.note_block.pling"
   tpa_teleport_cancelled: "entity.villager.no"
+  tpahere_request_sent: "entity.experience_orb.pickup"
+  tpahere_request_received: "entity.player.levelup"
 messages: # Supports legacy § color codes and MiniMessage tags (e.g. <green>, <gradient:blue:aqua>, <hover:show_text:'...'>) and any mix of both in the same message — legacy codes are automatically translated internally, so PlaceholderAPI placeholders that resolve to MiniMessage-formatted text (like some LuckPerms prefixes) render correctly alongside § codes.
   tpa_request_sent: "You sent a TPA-Request to %target%."
   tpa_request_received: "%player% sent you a TPA-Request! /tpaccept or /tpdeny"
+  tpahere_request_sent: "You sent a TPA-Request asking %target% to teleport to you."
+  tpahere_request_received: "%player% sent a TPA-Request asking you to teleport to them! /tpaccept or /tpdeny"
+  tpahere_disabled: "§cThe /tpahere command is currently disabled."
   tpa_accept_success: "You accepted the TPA-Request from %player%."
   tpa_accept_teleport: "You got teleported by %player%."
   tpa_teleport_warmup_started: "Teleporting to %player% in %seconds% seconds. Don't move!"
@@ -66,6 +74,7 @@ clickable_messages:
 help_messages:
   header: "§6--- SimpleTPA Commands ---"
   tpa: "§e/tpa <player> §7- Sends a TPA-Request to a Player."
+  tpahere: "§e/tpahere <player> §7- Asks a Player to teleport to you."
   tpaccept: "§e/tpaccept [player] §7- Accepts a pending TPA-Request. Specify a Player if you have multiple."
   tpdeny: "§e/tpdeny [player] §7- Denies a pending TPA-Request. Specify a Player if you have multiple."
   tpacancel: "§e/tpacancel [player] §7- Cancels one of your pending outgoing TPA-Requests."

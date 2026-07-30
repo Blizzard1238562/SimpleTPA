@@ -32,6 +32,9 @@ public final class ConfigManager {
     private int teleportWarmupSeconds;
     private boolean allowMultipleRequests;
     private boolean usageHintSuppressed;
+    private boolean tpaHereEnabled;
+    private int tpaHereCooldownSeconds;
+    private int tpaHereRequestTimeoutSeconds;
 
     public ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -68,6 +71,9 @@ public final class ConfigManager {
         teleportWarmupSeconds = activeConfig.getInt("settings.teleport_warmup_seconds", 5);
         allowMultipleRequests = activeConfig.getBoolean("settings.allow_multiple_requests", true);
         usageHintSuppressed = activeConfig.getBoolean("settings.suppress_usage_hint", true);
+        tpaHereEnabled = activeConfig.getBoolean("settings.tpahere_enabled", true);
+        tpaHereCooldownSeconds = activeConfig.getInt("settings.tpahere_cooldown", 30);
+        tpaHereRequestTimeoutSeconds = activeConfig.getInt("settings.tpahere_request_timeout", 60);
     }
 
     public int getTpaCooldownSeconds() {
@@ -108,6 +114,18 @@ public final class ConfigManager {
 
     public boolean isUsageHintSuppressed() {
         return usageHintSuppressed;
+    }
+
+    public boolean isTpaHereEnabled() {
+        return tpaHereEnabled;
+    }
+
+    public int getTpaHereCooldownSeconds() {
+        return tpaHereCooldownSeconds;
+    }
+
+    public int getTpaHereRequestTimeoutSeconds() {
+        return tpaHereRequestTimeoutSeconds;
     }
 
     public String getMessage(String key) {

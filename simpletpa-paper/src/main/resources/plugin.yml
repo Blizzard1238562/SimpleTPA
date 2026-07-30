@@ -8,6 +8,9 @@ commands:
   tpa:
     description: Sends a TPA-Request to a Player.
     usage: /tpa <player|version|help>
+  tpahere:
+    description: Asks a Player to teleport to you.
+    usage: /tpahere <player>
   tpaccept:
     description: Accepts a TPA-Request by a Player.
     usage: /tpaccept [player]
@@ -27,6 +30,9 @@ commands:
 permissions:
   tpa.command.tpa:
     description: Allows sending TPA requests.
+    default: true
+  tpa.command.tpahere:
+    description: Allows sending TPA-Here requests.
     default: true
   tpa.command.tpaccept:
     description: Allows accepting incoming TPA requests.

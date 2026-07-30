@@ -4,6 +4,7 @@ import Blizzard1238562.simpleTPA.command.TpaAcceptCommand;
 import Blizzard1238562.simpleTPA.command.TpaCancelCommand;
 import Blizzard1238562.simpleTPA.command.TpaCommand;
 import Blizzard1238562.simpleTPA.command.TpaDenyCommand;
+import Blizzard1238562.simpleTPA.command.TpaHereCommand;
 import Blizzard1238562.simpleTPA.command.TpaReloadCommand;
 import Blizzard1238562.simpleTPA.command.TpaToggleCommand;
 import Blizzard1238562.simpleTPA.config.ConfigManager;
@@ -70,6 +71,9 @@ public final class SimpleTPA extends JavaPlugin {
                                    DelayedTaskScheduler delayedTaskScheduler, TeleportService teleportService) {
         getCommand("tpa").setExecutor(new TpaCommand(
                 configManager, requestManager, soundPlayer, messageComponentFactory, updateChecker,
+                playerDisplayFormatter, messenger, delayedTaskScheduler));
+        getCommand("tpahere").setExecutor(new TpaHereCommand(
+                configManager, requestManager, soundPlayer, messageComponentFactory,
                 playerDisplayFormatter, messenger, delayedTaskScheduler));
         getCommand("tpaccept").setExecutor(new TpaAcceptCommand(configManager, requestManager, soundPlayer,
                 playerDisplayFormatter, messenger, teleportService));

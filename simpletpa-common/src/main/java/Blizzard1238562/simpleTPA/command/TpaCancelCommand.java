@@ -1,6 +1,7 @@
 package Blizzard1238562.simpleTPA.command;
 
 import Blizzard1238562.simpleTPA.config.ConfigManager;
+import Blizzard1238562.simpleTPA.manager.PendingRequest;
 import Blizzard1238562.simpleTPA.manager.TpaRequestManager;
 import Blizzard1238562.simpleTPA.platform.Messenger;
 import Blizzard1238562.simpleTPA.platform.SoundPlayer;
@@ -45,8 +46,8 @@ public final class TpaCancelCommand implements CommandExecutor {
             return true;
         }
 
-        Set<UUID> targetIds = requestManager.findTargetsForSender(player.getUniqueId());
-        if (targetIds.isEmpty()) {
+        Set<PendingRequest> outgoingRequests = requestManager.findTargetsForSender(player.getUniqueId());
+        if (outgoingRequests.isEmpty()) {
             messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_no_request")));
             return configManager.isUsageHintSuppressed();
         }
@@ -54,15 +55,16 @@ public final class TpaCancelCommand implements CommandExecutor {
         UUID targetId;
         if (args.length >= 1) {
             Player namedTarget = Bukkit.getPlayer(args[0]);
-            if (namedTarget == null || !targetIds.contains(namedTarget.getUniqueId())) {
+            PendingRequest chosen = namedTarget == null ? null : findByOtherPlayer(outgoingRequests, namedTarget.getUniqueId());
+            if (chosen == null) {
                 messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_no_request_to").replace("%player%", args[0])));
                 return configManager.isUsageHintSuppressed();
             }
-            targetId = namedTarget.getUniqueId();
-        } else if (targetIds.size() == 1) {
-            targetId = targetIds.iterator().next();
+            targetId = chosen.otherPlayerId();
+        } else if (outgoingRequests.size() == 1) {
+            targetId = outgoingRequests.iterator().next().otherPlayerId();
         } else {
-            messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_multiple_requests_outgoing").replace("%players%", formatTargetNames(targetIds))));
+            messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_multiple_requests_outgoing").replace("%players%", formatNames(outgoingRequests))));
             return configManager.isUsageHintSuppressed();
         }
 
@@ -78,8 +80,18 @@ public final class TpaCancelCommand implements CommandExecutor {
         return true;
     }
 
-    private String formatTargetNames(Set<UUID> targetIds) {
-        return targetIds.stream()
+    private PendingRequest findByOtherPlayer(Set<PendingRequest> requests, UUID otherPlayerId) {
+        for (PendingRequest request : requests) {
+            if (request.otherPlayerId().equals(otherPlayerId)) {
+                return request;
+            }
+        }
+        return null;
+    }
+
+    private String formatNames(Set<PendingRequest> requests) {
+        return requests.stream()
+                .map(PendingRequest::otherPlayerId)
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .map(playerDisplayFormatter::format)
