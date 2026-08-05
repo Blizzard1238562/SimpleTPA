@@ -1,6 +1,7 @@
 package Blizzard1238562.simpleTPA.command;
 
 import Blizzard1238562.simpleTPA.config.ConfigManager;
+import Blizzard1238562.simpleTPA.event.TpaRequestSendEvent;
 import Blizzard1238562.simpleTPA.manager.RequestType;
 import Blizzard1238562.simpleTPA.manager.TpaRequestManager;
 import Blizzard1238562.simpleTPA.platform.DelayedTaskScheduler;
@@ -142,6 +143,16 @@ public final class TpaCommand implements CommandExecutor {
             return configManager.isUsageHintSuppressed();
         }
 
+        // Event handling for TpaRequestSendEvent
+        TpaRequestSendEvent event = new TpaRequestSendEvent(player, target, RequestType.TPA);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            if (event.getCancelReason() != null) {
+                messenger.send(player, MessageFormatter.parse(event.getCancelReason()));
+            }
+            return configManager.isUsageHintSuppressed();
+        }
+
         requestManager.createRequest(senderId, target.getUniqueId(), RequestType.TPA);
         requestManager.recordCooldown(senderId);
 
@@ -151,7 +162,7 @@ public final class TpaCommand implements CommandExecutor {
         soundPlayer.play(player, "tpa_request_sent");
         soundPlayer.play(target, "tpa_request_received");
 
-        TpaRequestExpirationTask expirationTask = new TpaRequestExpirationTask(player, target, requestManager, configManager, soundPlayer, playerDisplayFormatter, messenger);
+        TpaRequestExpirationTask expirationTask = new TpaRequestExpirationTask(player, target, requestManager, configManager, soundPlayer, playerDisplayFormatter, messenger, RequestType.TPA);
         long timeoutTicks = (long) configManager.getTpaRequestTimeoutSeconds() * 20L;
         delayedTaskScheduler.runDelayed(expirationTask, timeoutTicks);
 

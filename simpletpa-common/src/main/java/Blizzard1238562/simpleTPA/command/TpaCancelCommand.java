@@ -1,7 +1,9 @@
 package Blizzard1238562.simpleTPA.command;
 
 import Blizzard1238562.simpleTPA.config.ConfigManager;
+import Blizzard1238562.simpleTPA.event.TpaRequestCancelledEvent;
 import Blizzard1238562.simpleTPA.manager.PendingRequest;
+import Blizzard1238562.simpleTPA.manager.RequestType;
 import Blizzard1238562.simpleTPA.manager.TpaRequestManager;
 import Blizzard1238562.simpleTPA.platform.Messenger;
 import Blizzard1238562.simpleTPA.platform.SoundPlayer;
@@ -53,6 +55,7 @@ public final class TpaCancelCommand implements CommandExecutor {
         }
 
         UUID targetId;
+        RequestType type = null;
         if (args.length >= 1) {
             Player namedTarget = Bukkit.getPlayer(args[0]);
             PendingRequest chosen = namedTarget == null ? null : findByOtherPlayer(outgoingRequests, namedTarget.getUniqueId());
@@ -61,8 +64,11 @@ public final class TpaCancelCommand implements CommandExecutor {
                 return configManager.isUsageHintSuppressed();
             }
             targetId = chosen.otherPlayerId();
+            type = chosen.type();
         } else if (outgoingRequests.size() == 1) {
-            targetId = outgoingRequests.iterator().next().otherPlayerId();
+            PendingRequest request = outgoingRequests.iterator().next();
+            targetId = request.otherPlayerId();
+            type = request.type();
         } else {
             messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_multiple_requests_outgoing").replace("%players%", formatNames(outgoingRequests))));
             return configManager.isUsageHintSuppressed();
@@ -76,6 +82,8 @@ public final class TpaCancelCommand implements CommandExecutor {
 
         if (target != null && target.isOnline()) {
             messenger.send(target, MessageFormatter.parse(configManager.getMessage("tpa_cancel_notify").replace("%player%", playerDisplayFormatter.format(player))));
+            // Event handling for TpaRequestCancelledEvent
+            Bukkit.getPluginManager().callEvent(new TpaRequestCancelledEvent(player, target, type));
         }
         return true;
     }
