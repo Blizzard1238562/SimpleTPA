@@ -59,6 +59,8 @@ messages: # Uses MiniMessage tags (e.g. <green>, <gradient:blue:aqua>, <hover:sh
   version_info: "<gray>SimpleTPA version info - Current: <gold>%current%</gold> | Latest: <gold>%latest%</gold> | <aqua>%url%"
   update_available_console: "A new version (%version%) of SimpleTPA is available! Download: %url%"
   update_available_player: "<yellow>A new version (<gold>%version%</gold>) of SimpleTPA is available! <white>Download: <aqua>%url%"
+  tpa_debug_enabled: "<green>TPA event debug logging is now enabled.</green>"
+  tpa_debug_disabled: "<gray>TPA event debug logging is now disabled.</gray>"
 
 clickable_messages:
   accept_text: "[✔ Accept]"

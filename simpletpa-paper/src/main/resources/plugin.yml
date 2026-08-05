@@ -26,6 +26,9 @@ commands:
   tpatoggle:
     description: Toggles whether you accept incoming TPA-Requests.
     usage: /tpatoggle
+  tpdebug:
+    description: Toggles console logging of TPA request lifecycle events.
+    usage: /tpdebug
 
 permissions:
   tpa.command.tpa:
@@ -54,4 +57,7 @@ permissions:
     default: true
   tpa.reload:
     description: Allows reloading the SimpleTPA configuration.
+    default: op
+  tpa.debug:
+    description: Allows toggling TPA event debug logging.
     default: op
