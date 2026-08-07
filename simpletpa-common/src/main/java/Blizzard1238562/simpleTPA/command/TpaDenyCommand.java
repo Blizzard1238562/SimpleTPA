@@ -1,7 +1,9 @@
 package Blizzard1238562.simpleTPA.command;
 
 import Blizzard1238562.simpleTPA.config.ConfigManager;
+import Blizzard1238562.simpleTPA.event.TpaRequestDeniedEvent;
 import Blizzard1238562.simpleTPA.manager.PendingRequest;
+import Blizzard1238562.simpleTPA.manager.RequestType;
 import Blizzard1238562.simpleTPA.manager.TpaRequestManager;
 import Blizzard1238562.simpleTPA.platform.Messenger;
 import Blizzard1238562.simpleTPA.platform.SoundPlayer;
@@ -53,6 +55,8 @@ public final class TpaDenyCommand implements CommandExecutor {
         }
 
         UUID requesterId;
+        // Type is stored to pass to the event handler
+        RequestType type = null;
         if (args.length >= 1) {
             Player namedRequester = Bukkit.getPlayer(args[0]);
             PendingRequest chosen = namedRequester == null ? null : findByOtherPlayer(incomingRequests, namedRequester.getUniqueId());
@@ -61,6 +65,7 @@ public final class TpaDenyCommand implements CommandExecutor {
                 return configManager.isUsageHintSuppressed();
             }
             requesterId = chosen.otherPlayerId();
+            type = chosen.type();
         } else if (incomingRequests.size() == 1) {
             requesterId = incomingRequests.iterator().next().otherPlayerId();
         } else {
@@ -70,10 +75,11 @@ public final class TpaDenyCommand implements CommandExecutor {
 
         Player requester = Bukkit.getPlayer(requesterId);
         requestManager.removeRequest(requesterId, player.getUniqueId());
-
         if (requester != null && requester.isOnline()) {
             messenger.send(requester, MessageFormatter.parse(configManager.getMessage("tpa_deny_notify").replace("%player%", playerDisplayFormatter.format(player))));
             soundPlayer.play(requester, "tpa_deny");
+            // Event handling for TpaRequestDeniedEvent
+            Bukkit.getPluginManager().callEvent(new TpaRequestDeniedEvent(requester, player, type));
         }
 
         String requesterName = requester != null ? playerDisplayFormatter.format(requester) : "unknown";

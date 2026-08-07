@@ -1,6 +1,7 @@
 package Blizzard1238562.simpleTPA.command;
 
 import Blizzard1238562.simpleTPA.config.ConfigManager;
+import Blizzard1238562.simpleTPA.event.TpaRequestAcceptedEvent;
 import Blizzard1238562.simpleTPA.manager.PendingRequest;
 import Blizzard1238562.simpleTPA.manager.RequestType;
 import Blizzard1238562.simpleTPA.manager.TpaRequestManager;
@@ -85,6 +86,9 @@ public final class TpaAcceptCommand implements CommandExecutor {
 
         messenger.send(player, MessageFormatter.parse(configManager.getMessage("tpa_accept_success").replace("%player%", playerDisplayFormatter.format(requester))));
         soundPlayer.play(player, "tpa_accept");
+
+        // Event handling for TpaRequestAcceptedEvent
+        Bukkit.getPluginManager().callEvent(new TpaRequestAcceptedEvent(requester, player, type));
 
         Player mover = type == RequestType.TPA_HERE ? player : requester;
         Player destination = type == RequestType.TPA_HERE ? requester : player;

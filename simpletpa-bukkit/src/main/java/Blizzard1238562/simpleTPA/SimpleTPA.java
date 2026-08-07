@@ -3,11 +3,13 @@ package Blizzard1238562.simpleTPA;
 import Blizzard1238562.simpleTPA.command.TpaAcceptCommand;
 import Blizzard1238562.simpleTPA.command.TpaCancelCommand;
 import Blizzard1238562.simpleTPA.command.TpaCommand;
+import Blizzard1238562.simpleTPA.command.TpaDebugCommand;
 import Blizzard1238562.simpleTPA.command.TpaDenyCommand;
 import Blizzard1238562.simpleTPA.command.TpaHereCommand;
 import Blizzard1238562.simpleTPA.command.TpaReloadCommand;
 import Blizzard1238562.simpleTPA.command.TpaToggleCommand;
 import Blizzard1238562.simpleTPA.config.ConfigManager;
+import Blizzard1238562.simpleTPA.listener.TpaDebugListener;
 import Blizzard1238562.simpleTPA.listener.UpdateNotificationListener;
 import Blizzard1238562.simpleTPA.manager.TpaRequestManager;
 import Blizzard1238562.simpleTPA.platform.DelayedTaskScheduler;
@@ -44,12 +46,15 @@ public final class SimpleTPA extends JavaPlugin {
         PlayerDisplayFormatter playerDisplayFormatter = new PlayerDisplayFormatter(configManager);
         DelayedTaskScheduler delayedTaskScheduler = new BukkitDelayedTaskScheduler(this);
         TeleportService teleportService = new BukkitTeleportServiceImpl(this);
+        TpaDebugListener debugListener = new TpaDebugListener(this);
+
         updateChecker = new ModrinthUpdateChecker(this, configManager, new BukkitAsyncTaskScheduler(this));
 
         registerCommands(requestManager, soundPlayer, messageComponentFactory, playerDisplayFormatter, messenger,
-                delayedTaskScheduler, teleportService);
+                delayedTaskScheduler, teleportService, debugListener);
         getServer().getPluginManager().registerEvents(
                 new UpdateNotificationListener(configManager, updateChecker, messenger), this);
+        getServer().getPluginManager().registerEvents(debugListener, this);
 
         updateChecker.start();
         getLogger().info("SimpleTPA Activated!");
@@ -68,7 +73,7 @@ public final class SimpleTPA extends JavaPlugin {
     private void registerCommands(TpaRequestManager requestManager, SoundPlayer soundPlayer,
                                    MessageComponentFactory messageComponentFactory,
                                    PlayerDisplayFormatter playerDisplayFormatter, Messenger messenger,
-                                   DelayedTaskScheduler delayedTaskScheduler, TeleportService teleportService) {
+                                   DelayedTaskScheduler delayedTaskScheduler, TeleportService teleportService, TpaDebugListener debugListener) {
         getCommand("tpa").setExecutor(new TpaCommand(
                 configManager, requestManager, soundPlayer, messageComponentFactory, updateChecker,
                 playerDisplayFormatter, messenger, delayedTaskScheduler));
@@ -83,5 +88,6 @@ public final class SimpleTPA extends JavaPlugin {
                 playerDisplayFormatter, messenger));
         getCommand("tpatoggle").setExecutor(new TpaToggleCommand(configManager, requestManager, soundPlayer, messenger));
         getCommand("tpreload").setExecutor(new TpaReloadCommand(configManager, updateChecker, messenger));
+        getCommand("tpdebug").setExecutor(new TpaDebugCommand(configManager, debugListener, messenger));
     }
 }

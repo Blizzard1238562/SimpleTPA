@@ -59,6 +59,8 @@ messages: # Uses legacy § color codes in this file. MiniMessage tags also work 
   version_info: "§7SimpleTPA version info - Current: §6%current% §7| Latest: §6%latest% §7| §b%url%"
   update_available_console: "A new version (%version%) of SimpleTPA is available! Download: %url%"
   update_available_player: "§eA new version (§6%version%§e) of SimpleTPA is available! §fDownload: §b%url%"
+  tpa_debug_enabled: "§aTPA event debug logging is now enabled."
+  tpa_debug_disabled: "§7TPA event debug logging is now disabled."
 
 clickable_messages:
   accept_text: "[✔ Accept]"

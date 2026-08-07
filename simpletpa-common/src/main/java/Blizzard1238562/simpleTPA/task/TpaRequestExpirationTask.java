@@ -1,12 +1,16 @@
 package Blizzard1238562.simpleTPA.task;
 
 import Blizzard1238562.simpleTPA.config.ConfigManager;
+import Blizzard1238562.simpleTPA.event.TpaRequestExpiredEvent;
+import Blizzard1238562.simpleTPA.manager.RequestType;
 import Blizzard1238562.simpleTPA.manager.TpaRequestManager;
 import Blizzard1238562.simpleTPA.platform.Messenger;
 import Blizzard1238562.simpleTPA.platform.SoundPlayer;
 import Blizzard1238562.simpleTPA.util.MessageFormatter;
 import Blizzard1238562.simpleTPA.util.PlayerDisplayFormatter;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public final class TpaRequestExpirationTask implements Runnable {
@@ -18,10 +22,11 @@ public final class TpaRequestExpirationTask implements Runnable {
     private final SoundPlayer soundPlayer;
     private final PlayerDisplayFormatter playerDisplayFormatter;
     private final Messenger messenger;
+    private final RequestType type;
 
     public TpaRequestExpirationTask(Player requester, Player target, TpaRequestManager requestManager,
                                      ConfigManager configManager, SoundPlayer soundPlayer,
-                                     PlayerDisplayFormatter playerDisplayFormatter, Messenger messenger) {
+                                     PlayerDisplayFormatter playerDisplayFormatter, Messenger messenger, RequestType type) {
         this.requester = requester;
         this.target = target;
         this.requestManager = requestManager;
@@ -29,6 +34,7 @@ public final class TpaRequestExpirationTask implements Runnable {
         this.soundPlayer = soundPlayer;
         this.playerDisplayFormatter = playerDisplayFormatter;
         this.messenger = messenger;
+        this.type = type;
     }
 
     @Override
@@ -40,6 +46,8 @@ public final class TpaRequestExpirationTask implements Runnable {
         }
 
         requestManager.removeRequest(senderId, targetId);
+        // Event handling for TpaRequestExpiredEvent
+        Bukkit.getPluginManager().callEvent(new TpaRequestExpiredEvent(requester, target, type));
 
         if (requester.isOnline()) {
             messenger.send(requester, MessageFormatter.parse(configManager.getMessage("tpa_request_expired_sender").replace("%target%", playerDisplayFormatter.format(target))));
