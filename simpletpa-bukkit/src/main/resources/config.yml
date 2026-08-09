@@ -12,6 +12,7 @@ settings:
   tpahere_enabled: true # If enabled, allows Players to use /tpahere to ask another Player to teleport to them.
   tpahere_cooldown: 30 # Cooldown in Seconds, before a Player can send another TPA-Here-Request. Shares the same default as tpa_cooldown but can be changed independently.
   tpahere_request_timeout: 60 # Time in Seconds, until a TPA-Here-Request runs out. Shares the same default as tpa_request_timeout but can be changed independently.
+  tpo_enabled: true # If enabled, allows staff to use /tpo to teleport to an offline Player's last known location. Also controls whether logout locations are recorded at all.
 sounds:
   tpa_request_sent: "entity.experience_orb.pickup"
   tpa_request_received: "entity.player.levelup"
@@ -61,6 +62,12 @@ messages: # Uses legacy § color codes in this file. MiniMessage tags also work 
   update_available_player: "§eA new version (§6%version%§e) of SimpleTPA is available! §fDownload: §b%url%"
   tpa_debug_enabled: "§aTPA event debug logging is now enabled."
   tpa_debug_disabled: "§7TPA event debug logging is now disabled."
+  tphere_success: "§aYou teleported §6%player% §ato you."
+  tphere_moved_notify: "§eYou were teleported to §6%player%§e."
+  tpo_disabled: "§cThe /tpo command is currently disabled."
+  tpo_player_online: "§6%player% §cis currently online, use /tpahere or /tpa instead."
+  tpo_no_data: "§cNo last known location is available for §6%player%§c."
+  tpo_success: "§aTeleported to §6%player%§a's last known location."
 
 clickable_messages:
   accept_text: "[✔ Accept]"
@@ -81,6 +88,8 @@ help_messages:
   tpdeny: "§c/tpdeny §7[player] - Denies a pending TPA-Request. Specify a Player if you have multiple."
   tpacancel: "§e/tpacancel §7[player] - Cancels one of your pending outgoing TPA-Requests."
   tpatoggle: "§e/tpatoggle §7- Toggles whether you can receive TPA-Requests."
+  tphere: "§e/tphere §7[player] - Force-teleports a Player to you. (Staff)"
+  tpo: "§e/tpo §7[player] - Teleports you to an offline Player's last known location. (Staff)"
   version: "§e/tpa version §7- Shows the current plugin version and update status."
   help: "§e/tpa help §7- Shows this help message."
   tpreload: "§e/tpreload §7- Reloads the plugin configuration."

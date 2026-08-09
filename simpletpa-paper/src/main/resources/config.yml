@@ -12,6 +12,7 @@ settings:
   tpahere_enabled: true # If enabled, allows Players to use /tpahere to ask another Player to teleport to them.
   tpahere_cooldown: 30 # Cooldown in Seconds, before a Player can send another TPA-Here-Request. Shares the same default as tpa_cooldown but can be changed independently.
   tpahere_request_timeout: 60 # Time in Seconds, until a TPA-Here-Request runs out. Shares the same default as tpa_request_timeout but can be changed independently.
+  tpo_enabled: true # If enabled, allows staff to use /tpo to teleport to an offline Player's last known location. Also controls whether logout locations are recorded at all.
 sounds:
   tpa_request_sent: "entity.experience_orb.pickup"
   tpa_request_received: "entity.player.levelup"
@@ -61,6 +62,12 @@ messages: # Uses MiniMessage tags (e.g. <green>, <gradient:blue:aqua>, <hover:sh
   update_available_player: "<yellow>A new version (<gold>%version%</gold>) of SimpleTPA is available! <white>Download: <aqua>%url%"
   tpa_debug_enabled: "<green>TPA event debug logging is now enabled.</green>"
   tpa_debug_disabled: "<gray>TPA event debug logging is now disabled.</gray>"
+  tphere_success: "<green>You teleported <gold>%player%</gold> to you."
+  tphere_moved_notify: "<yellow>You were teleported to <gold>%player%</gold>."
+  tpo_disabled: "<red>The /tpo command is currently disabled."
+  tpo_player_online: "<gold>%player%</gold> <red>is currently online, use /tpahere or /tpa instead."
+  tpo_no_data: "<red>No last known location is available for <gold>%player%</gold>."
+  tpo_success: "<green>Teleported to <gold>%player%</gold>'s last known location."
 
 clickable_messages:
   accept_text: "[✔ Accept]"
@@ -81,6 +88,8 @@ help_messages:
   tpdeny: "<red>/tpdeny</red> <gray>[player] - Denies a pending TPA-Request. Specify a Player if you have multiple."
   tpacancel: "<yellow>/tpacancel</yellow> <gray>[player] - Cancels one of your pending outgoing TPA-Requests."
   tpatoggle: "<yellow>/tpatoggle</yellow> <gray>- Toggles whether you can receive TPA-Requests."
+  tphere: "<yellow>/tphere</yellow> <gray>[player] - Force-teleports a Player to you. (Staff)"
+  tpo: "<yellow>/tpo</yellow> <gray>[player] - Teleports you to an offline Player's last known location. (Staff)"
   version: "<yellow>/tpa version</yellow> <gray>- Shows the current plugin version and update status."
   help: "<yellow>/tpa help</yellow> <gray>- Shows this help message."
   tpreload: "<yellow>/tpreload</yellow> <gray>- Reloads the plugin configuration."

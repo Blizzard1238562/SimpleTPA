@@ -28,6 +28,12 @@ commands:
   tpdebug:
     description: Toggles console logging of TPA request lifecycle events.
     usage: /tpdebug
+  tphere:
+    description: Force-teleports a Player to you.
+    usage: /tphere <player>
+  tpo:
+    description: Teleports you to an offline Player's last known location.
+    usage: /tpo <player>
 
 permissions:
   tpa.command.tpa:
@@ -59,4 +65,10 @@ permissions:
     default: op
   tpa.debug:
     description: Allows toggling TPA event debug logging.
+    default: op
+  tpa.command.tphere:
+    description: Allows force-teleporting a Player to you.
+    default: op
+  tpa.command.tpo:
+    description: Allows teleporting to an offline Player's last known location.
     default: op

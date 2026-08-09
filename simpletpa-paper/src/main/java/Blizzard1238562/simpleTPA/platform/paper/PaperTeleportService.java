@@ -3,6 +3,7 @@ package Blizzard1238562.simpleTPA.platform.paper;
 import Blizzard1238562.simpleTPA.platform.TeleportService;
 import Blizzard1238562.simpleTPA.platform.TeleportWarmupState;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,6 +18,11 @@ public final class PaperTeleportService implements TeleportService {
     @Override
     public void teleport(Player toMove, Player destination) {
         toMove.teleportAsync(destination.getLocation());
+    }
+
+    @Override
+    public void teleportToLocation(Player toMove, Location destination) {
+        toMove.teleportAsync(destination);
     }
 
     @Override

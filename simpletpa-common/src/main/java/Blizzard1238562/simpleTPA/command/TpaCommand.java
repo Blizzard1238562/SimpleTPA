@@ -31,6 +31,8 @@ public final class TpaCommand implements CommandExecutor {
             new HelpEntry("tpdeny", "tpa.command.tpdeny"),
             new HelpEntry("tpacancel", "tpa.command.tpacancel"),
             new HelpEntry("tpatoggle", "tpa.command.tpatoggle"),
+            new HelpEntry("tphere", "tpa.command.tphere"),
+            new HelpEntry("tpo", "tpa.command.tpo"),
             new HelpEntry("version", "tpa.command.version"),
             new HelpEntry("help", "tpa.command.help"),
             new HelpEntry("tpreload", "tpa.reload")
@@ -173,6 +175,9 @@ public final class TpaCommand implements CommandExecutor {
         messenger.send(sender, MessageFormatter.parse(configManager.getConfigValue("help_messages.header", "--- SimpleTPA Commands ---")));
         for (HelpEntry entry : HELP_ENTRIES) {
             if (entry.messageKey().equals("tpahere") && !configManager.isTpaHereEnabled()) {
+                continue;
+            }
+            if (entry.messageKey().equals("tpo") && !configManager.isTpoEnabled()) {
                 continue;
             }
             if (sender.hasPermission(entry.permission())) {

@@ -35,6 +35,7 @@ public final class ConfigManager {
     private boolean tpaHereEnabled;
     private int tpaHereCooldownSeconds;
     private int tpaHereRequestTimeoutSeconds;
+    private boolean tpoEnabled;
 
     public ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -69,11 +70,12 @@ public final class ConfigManager {
         playerDisplayFormat = activeConfig.getString("settings.player_display_format", "%player%");
         teleportWarmupEnabled = activeConfig.getBoolean("settings.teleport_warmup_enabled", false);
         teleportWarmupSeconds = activeConfig.getInt("settings.teleport_warmup_seconds", 5);
-        allowMultipleRequests = activeConfig.getBoolean("settings.allow_multiple_requests", true);
+        allowMultipleRequests = activeConfig.getBoolean("settings.allow_multiple_requests", false);
         usageHintSuppressed = activeConfig.getBoolean("settings.suppress_usage_hint", true);
         tpaHereEnabled = activeConfig.getBoolean("settings.tpahere_enabled", true);
         tpaHereCooldownSeconds = activeConfig.getInt("settings.tpahere_cooldown", 30);
         tpaHereRequestTimeoutSeconds = activeConfig.getInt("settings.tpahere_request_timeout", 60);
+        tpoEnabled = activeConfig.getBoolean("settings.tpo_enabled", true);
     }
 
     public int getTpaCooldownSeconds() {
@@ -126,6 +128,10 @@ public final class ConfigManager {
 
     public int getTpaHereRequestTimeoutSeconds() {
         return tpaHereRequestTimeoutSeconds;
+    }
+
+    public boolean isTpoEnabled() {
+        return tpoEnabled;
     }
 
     public String getMessage(String key) {

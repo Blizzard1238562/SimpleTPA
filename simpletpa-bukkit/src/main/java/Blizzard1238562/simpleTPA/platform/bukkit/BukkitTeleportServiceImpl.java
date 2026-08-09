@@ -2,6 +2,7 @@ package Blizzard1238562.simpleTPA.platform.bukkit;
 
 import Blizzard1238562.simpleTPA.platform.TeleportService;
 import Blizzard1238562.simpleTPA.platform.TeleportWarmupState;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,6 +17,11 @@ public final class BukkitTeleportServiceImpl implements TeleportService {
 
     @Override
     public void teleport(Player toMove, Player destination) {
+        toMove.teleport(destination);
+    }
+
+    @Override
+    public void teleportToLocation(Player toMove, Location destination) {
         toMove.teleport(destination);
     }
 
