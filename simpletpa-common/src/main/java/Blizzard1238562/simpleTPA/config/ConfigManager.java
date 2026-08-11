@@ -6,12 +6,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -167,7 +169,13 @@ public final class ConfigManager {
     }
 
     private FileConfiguration mergeWithDefaults(File configFile) {
-        FileConfiguration userConfig = YamlConfiguration.loadConfiguration(configFile);
+        YamlConfiguration userConfig = new YamlConfiguration();
+        try {
+            userConfig.load(configFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            return recoverFromBrokenConfig(configFile, e);
+        }
+
         try (InputStream stream = plugin.getResource("config.yml")) {
             if (stream == null) {
                 plugin.getLogger().warning("Could not load bundled config.yml.");
@@ -202,6 +210,33 @@ public final class ConfigManager {
             plugin.getLogger().severe("Could not merge config.yml: " + e.getMessage());
             return userConfig;
         }
+    }
+
+    private FileConfiguration recoverFromBrokenConfig(File configFile, Exception cause) {
+        plugin.getLogger().severe("config.yml could not be parsed and is invalid YAML: " + cause.getMessage());
+
+        File backupFile = new File(configFile.getParentFile(), "config.yml.broken-" + System.currentTimeMillis());
+        try {
+            Files.copy(configFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            plugin.getLogger().severe("The broken config.yml was backed up to " + backupFile.getName() + ".");
+        } catch (IOException backupException) {
+            plugin.getLogger().severe("Could not back up the broken config.yml: " + backupException.getMessage());
+        }
+
+        try (InputStream stream = plugin.getResource("config.yml")) {
+            if (stream == null) {
+                plugin.getLogger().severe("Could not load bundled config.yml to restore defaults.");
+                return new YamlConfiguration();
+            }
+            Files.copy(stream, configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            plugin.getLogger().severe("A fresh default config.yml was written. Please re-apply any customizations from the backup file.");
+        } catch (IOException writeException) {
+            plugin.getLogger().severe("Could not write a fresh default config.yml: " + writeException.getMessage());
+            return new YamlConfiguration();
+        }
+
+        loadBundledDefaults();
+        return YamlConfiguration.loadConfiguration(configFile);
     }
 
     private void appendMissingKeys(File configFile, Map<String, Object> missingKeys) throws IOException {

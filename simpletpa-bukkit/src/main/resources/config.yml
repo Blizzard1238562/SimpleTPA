@@ -51,6 +51,8 @@ messages: # Uses legacy § color codes in this file. MiniMessage tags also work 
   tpa_cancel_notify: "§6%player% §7cancelled their TPA-Request."
   tpa_request_expired_sender: "§7Your TPA-Request to §6%target% §7ran out."
   tpa_request_expired_receiver: "§7The TPA-Request by §6%player% §7ran out."
+  tpahere_request_expired_sender: "§7Your TPA-Request asking §6%target% §7to teleport to you ran out."
+  tpahere_request_expired_receiver: "§7The TPA-Request by §6%player% §7asking you to teleport to them ran out."
   tpa_cooldown: "§ePlease wait §6%seconds% §eSeconds, before sending a new TPA-Request."
   config_reloaded: "§aThe Configuration has succesfully been reloaded."
   no_permission: "§cYou dont have the required Permissions to use this Command.!"

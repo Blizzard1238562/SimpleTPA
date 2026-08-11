@@ -100,7 +100,7 @@ public final class TpaHereCommand implements CommandExecutor {
         }
 
         // Event handling for TpaRequestSendEvent
-        TpaRequestSendEvent event = new TpaRequestSendEvent(player, target, RequestType.TPA);
+        TpaRequestSendEvent event = new TpaRequestSendEvent(player, target, RequestType.TPA_HERE);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             if (event.getCancelReason() != null) {

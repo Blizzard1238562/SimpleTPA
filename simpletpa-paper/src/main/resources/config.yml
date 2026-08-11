@@ -51,6 +51,8 @@ messages: # Uses MiniMessage tags (e.g. <green>, <gradient:blue:aqua>, <hover:sh
   tpa_cancel_notify: "<gold>%player%</gold> <gray>cancelled their TPA-Request."
   tpa_request_expired_sender: "<gray>Your TPA-Request to <gold>%target%</gold> ran out."
   tpa_request_expired_receiver: "<gray>The TPA-Request by <gold>%player%</gold> ran out."
+  tpahere_request_expired_sender: "<gray>Your TPA-Request asking <gold>%target%</gold> to teleport to you ran out."
+  tpahere_request_expired_receiver: "<gray>The TPA-Request by <gold>%player%</gold> asking you to teleport to them ran out."
   tpa_cooldown: "<yellow>Please wait <gold>%seconds%</gold> Seconds, before sending a new TPA-Request."
   config_reloaded: "<green>The Configuration has succesfully been reloaded."
   no_permission: "<red>You dont have the required Permissions to use this Command.!"

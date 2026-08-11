@@ -49,13 +49,16 @@ public final class TpaRequestExpirationTask implements Runnable {
         // Event handling for TpaRequestExpiredEvent
         Bukkit.getPluginManager().callEvent(new TpaRequestExpiredEvent(requester, target, type));
 
+        String senderMessageKey = type == RequestType.TPA_HERE ? "tpahere_request_expired_sender" : "tpa_request_expired_sender";
+        String receiverMessageKey = type == RequestType.TPA_HERE ? "tpahere_request_expired_receiver" : "tpa_request_expired_receiver";
+
         if (requester.isOnline()) {
-            messenger.send(requester, MessageFormatter.parse(configManager.getMessage("tpa_request_expired_sender").replace("%target%", playerDisplayFormatter.format(target))));
+            messenger.send(requester, MessageFormatter.parse(configManager.getMessage(senderMessageKey).replace("%target%", playerDisplayFormatter.format(target))));
             soundPlayer.play(requester, "tpa_expired");
         }
 
         if (target.isOnline()) {
-            messenger.send(target, MessageFormatter.parse(configManager.getMessage("tpa_request_expired_receiver").replace("%player%", playerDisplayFormatter.format(requester))));
+            messenger.send(target, MessageFormatter.parse(configManager.getMessage(receiverMessageKey).replace("%player%", playerDisplayFormatter.format(requester))));
             soundPlayer.play(target, "tpa_expired");
         }
     }

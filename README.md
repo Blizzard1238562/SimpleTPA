@@ -51,6 +51,8 @@ Install whichever matches your server software into `plugins/`; don't run both a
 
 Issues and pull requests are welcome. Please keep changes to the module `pom.xml` files (API versioning) and the update checker minimal and well-explained, since both are easy to break in ways that only show up at runtime.
 
+By submitting a contribution, you agree it may be incorporated into SimpleTPA under the terms in [LICENSE](LICENSE) (see the "Contributions" clause) - contributing does not grant redistribution rights to you or anyone else.
+
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE). Commercial use, modification, and redistribution (including selling) are permitted; if you redistribute this project or a derivative of it, you must retain the copyright/attribution notices and the [NOTICE](NOTICE) file crediting the original SimpleTPA project.
+All rights reserved - see [LICENSE](LICENSE). You're free to download, modify, and run the Software (original or modified) on your own server(s), including commercially. If you modify it, you must keep the [LICENSE](LICENSE) and [NOTICE](NOTICE) files alongside your copy with their notices intact. What's not permitted is redistributing the Software or any derivative of it - e.g. re-uploading it (modified or not) to Modrinth, Hangar, SpigotMC, CurseForge, or anywhere else - without prior written consent from the copyright holder. The only official distribution channel is [Modrinth](https://modrinth.com/plugin/simpletpaplugin).
